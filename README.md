@@ -4,6 +4,16 @@ Interactive, portable reference architecture dashboard for Modern Workplace and 
 
 This project packages a self-contained HTML explorer, sample datasets, and a PowerShell generator that can emit timestamped HTML and JSON outputs from either public-safe fixtures or live Microsoft Graph data.
 
+## Live Demo
+
+Start here if you want to test drive the explorer immediately:
+
+- Live hosted demo: https://mehrdadirani.github.io/modern-workplace-reference-architecture-explorer/
+- Healthy generated example: https://mehrdadirani.github.io/modern-workplace-reference-architecture-explorer/examples/healthy-sample.html
+- Degraded generated example: https://mehrdadirani.github.io/modern-workplace-reference-architecture-explorer/examples/degraded-sample.html
+
+If you prefer to run the files locally, you can also open `index.html` directly from the repository or generate new outputs with the PowerShell script.
+
 ## Why this exists
 
 Modern Workplace conversations often split across too many artifacts: executive slides, platform diagrams, operational dashboards, and migration notes. This repo combines those perspectives into one reusable asset that works for:
