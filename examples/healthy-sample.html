@@ -1,0 +1,2612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern Workplace Reference Architecture Explorer</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: rgba(22, 27, 34, 0.92);
+  --surface-strong: #161b22;
+  --surface-soft: rgba(31, 38, 48, 0.86);
+  --panel: rgba(15, 21, 28, 0.94);
+  --border: rgba(110, 118, 129, 0.25);
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #1f6feb;
+  --accent-soft: rgba(31, 111, 235, 0.18);
+  --accent-strong: #58a6ff;
+  --pass: #3fb950;
+  --warn: #d29922;
+  --fail: #f85149;
+  --shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --grid-gap: 18px;
+  --font-ui: "Segoe UI Variable", "Segoe UI", "Inter", system-ui, sans-serif;
+  --font-display: "Bahnschrift", "Aptos Display", "Segoe UI Variable", sans-serif;
+}
+
+body[data-theme="light"] {
+  --bg: #f4f6fb;
+  --surface: rgba(255, 255, 255, 0.94);
+  --surface-strong: #ffffff;
+  --surface-soft: rgba(248, 250, 253, 0.98);
+  --panel: rgba(247, 249, 252, 0.98);
+  --border: rgba(21, 32, 51, 0.12);
+  --text: #152033;
+  --muted: #5b6474;
+  --accent: #ff6b00;
+  --accent-soft: rgba(255, 107, 0, 0.12);
+  --accent-strong: #ff8a3d;
+  --pass: #1f9d55;
+  --warn: #d97706;
+  --fail: #dc2626;
+  --shadow: 0 18px 44px rgba(21, 32, 51, 0.10);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(31, 111, 235, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(63, 185, 80, 0.12), transparent 24%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
+    var(--bg);
+  font: 15px/1.55 var(--font-ui);
+}
+
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.16;
+  mix-blend-mode: soft-light;
+}
+
+a {
+  color: var(--accent-strong);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.shell {
+  position: relative;
+  width: min(1500px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 18px 0 36px;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(16px);
+  background: linear-gradient(180deg, rgba(13, 17, 23, 0.92), rgba(13, 17, 23, 0.72));
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+body[data-theme="light"] .sticky-header {
+  background: linear-gradient(180deg, rgba(244, 246, 251, 0.94), rgba(244, 246, 251, 0.82));
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.9fr);
+  gap: 18px;
+  padding: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-copy h1 {
+  margin: 0;
+  font: 700 clamp(2.1rem, 5vw, 4.4rem)/0.96 var(--font-display);
+  letter-spacing: -0.04em;
+  max-width: 13ch;
+}
+
+.hero-copy p {
+  margin: 14px 0 0;
+  max-width: 72ch;
+  color: var(--muted);
+}
+
+.hero-kicker,
+.mode-badge,
+.pill,
+.status-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-kicker {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(160deg, rgba(31, 111, 235, 0.08), transparent 32%),
+    linear-gradient(180deg, var(--surface), var(--surface-strong));
+}
+
+.hero-panel h2 {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero-list {
+  display: grid;
+  gap: 8px;
+}
+
+.hero-list div {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px 18px;
+}
+
+.toolbar-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.mode-badge {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.btn,
+.select,
+.search {
+  min-height: 42px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+  color: var(--text);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  border-color: transparent;
+  color: #fff;
+}
+
+.btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.select,
+.search {
+  padding: 0 14px;
+}
+
+.select {
+  min-width: 210px;
+}
+
+.search {
+  min-width: min(300px, 70vw);
+}
+
+.file-input {
+  display: none;
+}
+
+.health-banner {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.9fr);
+  gap: 18px;
+}
+
+.health-card,
+.narrative-card,
+.kpi-card,
+.tab-panel,
+.table-card,
+.footer-card {
+  background: linear-gradient(180deg, var(--surface), var(--surface-strong));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.health-card,
+.narrative-card {
+  padding: 18px 20px;
+}
+
+.health-card {
+  display: grid;
+  gap: 12px;
+}
+
+.banner-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.banner-title h2,
+.section-head h2 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.scoreline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pill {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.status-dot::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 12px currentColor;
+}
+
+.status-pass {
+  color: var(--pass);
+}
+
+.status-warn {
+  color: var(--warn);
+}
+
+.status-fail {
+  color: var(--fail);
+}
+
+.narrative-card strong {
+  display: block;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  margin-bottom: 8px;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.kpi-card {
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -10% -40% auto;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 68%);
+}
+
+.kpi-label {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.kpi-value {
+  margin-top: 10px;
+  font-size: clamp(1.5rem, 2vw, 2.3rem);
+  font-weight: 700;
+}
+
+.kpi-meta {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sparkline {
+  margin-top: 12px;
+  width: 100%;
+  height: 28px;
+}
+
+.tabs {
+  margin-top: 10px;
+}
+
+.tablist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.tab-button {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 11px 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.tab-button[aria-selected="true"] {
+  background: linear-gradient(135deg, var(--accent-soft), rgba(255, 255, 255, 0.02));
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.tab-panel {
+  display: none;
+  padding: 20px;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.section-head p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  max-width: 72ch;
+}
+
+.architecture-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.85fr);
+  gap: 18px;
+}
+
+.diagram-card,
+.details-card,
+.viz-card,
+.readme-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+}
+
+.diagram-card {
+  overflow: hidden;
+}
+
+.diagram-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.diagram-toolbar .toolbar-group {
+  gap: 8px;
+}
+
+.layer-filter {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.layer-filter.active {
+  background: var(--accent-soft);
+  color: var(--text);
+  border-color: transparent;
+}
+
+.diagram-surface {
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.layer-row {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+  padding: 14px;
+}
+
+.layer-row h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.layer-order {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.component-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.component-pill {
+  position: relative;
+  min-width: 170px;
+  max-width: 240px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.component-pill:hover,
+.component-pill:focus-visible,
+.component-pill.active {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.component-pill .name {
+  display: block;
+  font-weight: 700;
+}
+
+.component-pill .meta {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.component-pill .tiny-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.component-pill.pass .tiny-status {
+  background: var(--pass);
+}
+
+.component-pill.warn .tiny-status {
+  background: var(--warn);
+}
+
+.component-pill.fail .tiny-status {
+  background: var(--fail);
+}
+
+.details-card {
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  position: sticky;
+  top: 148px;
+}
+
+.details-card h3 {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.05;
+}
+
+.details-sub {
+  color: var(--muted);
+}
+
+.metric-list,
+.bullet-list,
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.metric-chip,
+.tag {
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  font-size: 12px;
+}
+
+.table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0 12px;
+}
+
+.table-card {
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.table-scroll {
+  overflow: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface-strong);
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.zero-trust-layout,
+.geo-layout,
+.method-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.viz-card,
+.readme-card {
+  padding: 18px;
+}
+
+.viz-card h3,
+.readme-card h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.radar {
+  width: 100%;
+  max-width: 420px;
+  margin: 12px auto;
+  display: block;
+}
+
+.legend-stack,
+.region-stack,
+.auth-note-list {
+  display: grid;
+  gap: 10px;
+}
+
+.legend-item,
+.region-card,
+.note-line {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+}
+
+.region-card h4,
+.legend-item h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.geo-map {
+  min-height: 360px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(31, 111, 235, 0.08), rgba(255, 255, 255, 0.02));
+}
+
+.map-fallback {
+  padding: 20px;
+  display: grid;
+  place-items: center;
+  min-height: 360px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.map-fallback svg {
+  width: min(420px, 100%);
+  margin-top: 18px;
+}
+
+.mermaid-shell {
+  margin-top: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-soft);
+  overflow: hidden;
+}
+
+.mermaid-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mermaid-wrap,
+.schema-wrap,
+.assumptions-wrap {
+  padding: 14px;
+}
+
+.mermaid-wrap {
+  min-height: 180px;
+}
+
+.mono,
+pre,
+code {
+  font-family: Consolas, "SFMono-Regular", "Liberation Mono", monospace;
+}
+
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.details-block {
+  margin-top: 18px;
+}
+
+details {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-soft);
+  overflow: hidden;
+}
+
+summary {
+  cursor: pointer;
+  padding: 14px 16px;
+  font-weight: 700;
+}
+
+details > div {
+  padding: 0 16px 16px;
+  color: var(--muted);
+}
+
+.alert {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  display: none;
+}
+
+.alert.show {
+  display: block;
+}
+
+.alert.error {
+  border-color: rgba(248, 81, 73, 0.35);
+  color: #ffd6d3;
+  background: rgba(248, 81, 73, 0.10);
+}
+
+.alert.info {
+  border-color: rgba(31, 111, 235, 0.35);
+  color: var(--text);
+  background: rgba(31, 111, 235, 0.10);
+}
+
+.footer-card {
+  margin-top: 18px;
+  padding: 18px 20px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.footer-grid h3 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.footer-grid p,
+.footer-grid li {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.footer-grid ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero,
+  .health-banner,
+  .kpi-card,
+  .tab-panel,
+  .footer-card {
+    animation: riseIn 420ms ease both;
+  }
+
+  .kpi-card:nth-child(2) { animation-delay: 40ms; }
+  .kpi-card:nth-child(3) { animation-delay: 80ms; }
+  .kpi-card:nth-child(4) { animation-delay: 120ms; }
+  .kpi-card:nth-child(5) { animation-delay: 160ms; }
+  .kpi-card:nth-child(6) { animation-delay: 200ms; }
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media print {
+  body::before,
+  .toolbar,
+  .tablist,
+  .table-toolbar .btn,
+  .diagram-toolbar,
+  .alert {
+    display: none !important;
+  }
+
+  body,
+  .sticky-header,
+  .health-card,
+  .narrative-card,
+  .kpi-card,
+  .tab-panel,
+  .table-card,
+  .footer-card,
+  .viz-card,
+  .details-card,
+  .diagram-card,
+  .readme-card {
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+
+  .sticky-header {
+    position: static;
+    border: 1px solid #d0d7de;
+  }
+
+  .tab-panel {
+    display: block !important;
+    page-break-after: always;
+  }
+
+  th {
+    background: #f6f8fa !important;
+    color: #57606a !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .hero,
+  .health-banner,
+  .architecture-layout,
+  .zero-trust-layout,
+  .geo-layout,
+  .method-layout,
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .details-card {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .shell {
+    width: min(100% - 18px, 100%);
+  }
+
+  .hero,
+  .toolbar,
+  .tab-panel,
+  .health-card,
+  .narrative-card,
+  .footer-card {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .search,
+  .select {
+    width: 100%;
+  }
+
+  .component-pill {
+    min-width: calc(50% - 10px);
+  }
+}
+
+@media (max-width: 520px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .component-pill {
+    min-width: 100%;
+  }
+}
+</style>
+<script type="application/schema+json" id="data-schema">
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Modern Workplace Reference Architecture Explorer Contract",
+  "type": "object",
+  "required": ["version", "generated", "tenant", "layers", "edges", "legacyMap"],
+  "properties": {
+    "version": { "type": "string" },
+    "generated": { "type": "string", "format": "date-time" },
+    "tenant": {
+      "type": "object",
+      "required": ["displayName", "regions"],
+      "properties": {
+        "displayName": { "type": "string" },
+        "regions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "components"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "name", "category", "dependencies", "zeroTrustPillars", "telemetry"],
+              "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "category": { "type": "string" },
+                "legacy": { "type": "array", "items": { "type": "string" } },
+                "modernReplaces": { "type": "array", "items": { "type": "string" } },
+                "dependencies": { "type": "array", "items": { "type": "string" } },
+                "zeroTrustPillars": { "type": "array", "items": { "type": "string" } },
+                "docs": { "type": "string" },
+                "telemetry": {
+                  "type": "object",
+                  "required": ["status", "adoption", "signalSummary", "lastChecked"],
+                  "properties": {
+                    "status": { "enum": ["pass", "warn", "fail", "unknown"] },
+                    "adoption": { "type": "number", "minimum": 0, "maximum": 1 },
+                    "signalSummary": { "type": "string" },
+                    "lastChecked": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "kind"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "kind": { "enum": ["required", "optional", "dataflow"] }
+        }
+      }
+    },
+    "legacyMap": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["legacy", "modern"],
+        "properties": {
+          "legacy": { "type": "string" },
+          "modern": { "type": "array", "items": { "type": "string" } },
+          "status": { "type": "string" },
+          "owner": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}
+</script>
+</head>
+<body data-theme="dark">
+<div class="shell">
+  <header class="sticky-header">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="hero-kicker">Interactive reference explorer</div>
+        <h1>Modern Workplace Reference Architecture Explorer</h1>
+        <p>
+          A click-through, portfolio-safe map of the Modern Workplace / EUC estate with live-ready telemetry hooks,
+          legacy-to-modern mappings, Zero Trust coverage, and a region footprint that stays meaningful from file://.
+        </p>
+      </div>
+      <aside class="hero-panel" aria-label="Value summary">
+        <div>
+          <h2>Mixed audience value</h2>
+          <div class="hero-list">
+            <div><strong>Execs:</strong> see what is deployed, missing, or drifting in one screen.</div>
+            <div><strong>Architects:</strong> inspect dependencies, replacements, and recommended patterns.</div>
+            <div><strong>Ops:</strong> track adoption, gaps, and health signals by layer.</div>
+            <div><strong>Security:</strong> overlay Zero Trust pillar coverage without a second artifact.</div>
+          </div>
+        </div>
+      </aside>
+    </section>
+    <section class="toolbar" aria-label="Dashboard controls">
+      <div class="toolbar-group">
+        <span class="mode-badge"><strong>Dataset</strong> <span id="datasetBadge">Healthy sample</span></span>
+        <span class="mode-badge"><strong>Mode</strong> <span id="modeBadge">Sample</span></span>
+        <label>
+          <select id="sampleSelector" class="select" aria-label="Choose sample dataset">
+            <option value="healthy">Healthy sample</option>
+            <option value="degraded">Degraded sample</option>
+          </select>
+        </label>
+      </div>
+      <div class="toolbar-group">
+        <input id="globalSearch" class="search" type="search" placeholder="Search products, legacy tech, or regions" aria-label="Search dataset">
+        <label for="fileInput" class="btn">Load JSON</label>
+        <input id="fileInput" class="file-input" type="file" accept="application/json,.json">
+        <button class="btn btn-primary" id="connectButton" type="button">Connect Graph</button>
+        <button class="btn" id="themeButton" type="button">Theme</button>
+        <button class="btn" id="printButton" type="button">Print</button>
+      </div>
+    </section>
+  </header>
+
+  <div id="alert" class="alert" role="status" aria-live="polite"></div>
+
+  <section class="health-banner">
+    <article class="health-card">
+      <div class="banner-title">
+        <div>
+          <h2>Health banner</h2>
+          <div id="bannerHeadline" style="margin-top:8px;font-size:clamp(1.1rem, 2vw, 1.8rem);font-weight:700"></div>
+        </div>
+        <div id="overallStatus" class="pill"></div>
+      </div>
+      <div class="scoreline" id="scoreline"></div>
+    </article>
+    <article class="narrative-card">
+      <h2>One-line narrative</h2>
+      <strong id="narrativeLead"></strong>
+      <div id="narrativeBody" style="color:var(--muted)"></div>
+    </article>
+  </section>
+
+  <section class="kpi-grid" id="kpiGrid" aria-label="Key metrics"></section>
+
+  <section class="tabs">
+    <div class="tablist" role="tablist" aria-label="Dashboard sections">
+      <button class="tab-button" role="tab" aria-selected="true" aria-controls="tab-architecture" id="btn-architecture">Architecture</button>
+      <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab-legacy" id="btn-legacy">Legacy→Modern</button>
+      <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab-zero-trust" id="btn-zero-trust">Zero Trust</button>
+      <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab-geo" id="btn-geo">Geo</button>
+      <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab-method" id="btn-method">Methodology</button>
+    </div>
+
+    <section class="tab-panel active" role="tabpanel" id="tab-architecture" aria-labelledby="btn-architecture">
+      <div class="section-head">
+        <div>
+          <h2>Layered architecture view</h2>
+          <p>Click any component to inspect dependencies, legacy replacements, current telemetry, and the supporting docs link.</p>
+        </div>
+      </div>
+
+      <div class="architecture-layout">
+        <div>
+          <div class="diagram-card">
+            <div class="diagram-toolbar">
+              <div class="toolbar-group" id="layerFilters" aria-label="Filter by layer"></div>
+              <div class="toolbar-group">
+                <button class="btn" id="toggleMermaid" type="button">Toggle dependency graph</button>
+                <button class="btn" id="exportProductsCsv" type="button">Export CSV</button>
+              </div>
+            </div>
+            <div class="diagram-surface" id="diagramSurface"></div>
+          </div>
+
+          <div class="mermaid-shell" id="mermaidShell" hidden>
+            <div class="mermaid-head">
+              <strong>Dependency graph</strong>
+              <span class="mode-badge">Mermaid renders when online; fallback text stays available offline.</span>
+            </div>
+            <div class="mermaid-wrap">
+              <div id="mermaidFallback" class="mono"></div>
+              <div id="mermaidTarget"></div>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="section-head" style="margin-bottom:10px">
+              <div>
+                <h2>Component inventory</h2>
+                <p>Searchable and sortable drill-down table. Filter is shared with the global search input.</p>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table id="componentTable">
+                <thead>
+                  <tr>
+                    <th data-sort="name">Component</th>
+                    <th data-sort="layer">Layer</th>
+                    <th data-sort="status">Status</th>
+                    <th data-sort="adoption">Adoption</th>
+                    <th data-sort="legacy">Legacy replaced</th>
+                    <th data-sort="dependencies">Dependencies</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <aside class="details-card" id="detailsCard" aria-live="polite">
+          <div>
+            <div class="kpi-label">Selected component</div>
+            <h3 id="detailName">Microsoft Entra ID</h3>
+            <div class="details-sub" id="detailCategory">Identity &amp; Access</div>
+          </div>
+          <div class="metric-list" id="detailMetrics"></div>
+          <div>
+            <div class="kpi-label">Signal summary</div>
+            <div id="detailSignal" style="margin-top:6px"></div>
+          </div>
+          <div>
+            <div class="kpi-label">Legacy replaced</div>
+            <div class="tag-list" id="detailLegacy"></div>
+          </div>
+          <div>
+            <div class="kpi-label">Modern platform shift</div>
+            <div class="tag-list" id="detailModern"></div>
+          </div>
+          <div>
+            <div class="kpi-label">Dependencies</div>
+            <div class="bullet-list" id="detailDependencies"></div>
+          </div>
+          <div>
+            <div class="kpi-label">Zero Trust pillars</div>
+            <div class="tag-list" id="detailPillars"></div>
+          </div>
+          <div>
+            <a id="detailDocs" href="#" target="_blank" rel="noreferrer">Open Microsoft Learn reference</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" id="tab-legacy" aria-labelledby="btn-legacy">
+      <div class="section-head">
+        <div>
+          <h2>Legacy→Modern mapping</h2>
+          <p>Track what legacy technologies are still in the estate, what modern platforms replace them, and who owns the migration story.</p>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <input id="legacySearch" class="search" type="search" placeholder="Filter legacy items" aria-label="Filter legacy map">
+        <button class="btn" id="exportLegacyCsv" type="button">Export CSV</button>
+      </div>
+      <div class="table-scroll">
+        <table id="legacyTable">
+          <thead>
+            <tr>
+              <th data-sort="legacy">Legacy technology</th>
+              <th data-sort="modern">Modern target</th>
+              <th data-sort="status">Status</th>
+              <th data-sort="owner">Owner</th>
+              <th data-sort="notes">Notes</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" id="tab-zero-trust" aria-labelledby="btn-zero-trust">
+      <div class="section-head">
+        <div>
+          <h2>Zero Trust overlay</h2>
+          <p>Coverage is derived from the pillars each component supports plus the current adoption and health signals across the estate.</p>
+        </div>
+      </div>
+      <div class="zero-trust-layout">
+        <article class="viz-card">
+          <h3>Pillar radar</h3>
+          <svg id="radarChart" class="radar" viewBox="0 0 320 320" aria-label="Zero Trust radar chart"></svg>
+        </article>
+        <article class="viz-card">
+          <h3>Pillar breakdown</h3>
+          <div class="legend-stack" id="pillarLegend"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" id="tab-geo" aria-labelledby="btn-geo">
+      <div class="section-head">
+        <div>
+          <h2>Region footprint</h2>
+          <p>Leaflet is loaded only when available. If not, the built-in fallback still shows the regional footprint and adoption posture.</p>
+        </div>
+      </div>
+      <div class="geo-layout">
+        <article class="viz-card">
+          <h3>Geo view</h3>
+          <div id="geoMap" class="geo-map" aria-live="polite"></div>
+        </article>
+        <article class="viz-card">
+          <h3>Region signals</h3>
+          <div class="region-stack" id="regionStack"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" id="tab-method" aria-labelledby="btn-method">
+      <div class="section-head">
+        <div>
+          <h2>Methodology and assumptions</h2>
+          <p>Includes the JSON contract, scoring approach, sanitization notes, and live fetcher guidance for Graph / Log Analytics / KQL.</p>
+        </div>
+      </div>
+      <div class="method-layout">
+        <article class="viz-card">
+          <h3>JSON Schema</h3>
+          <details>
+            <summary>View raw schema contract</summary>
+            <div class="schema-wrap"><pre id="schemaBlock"></pre></div>
+          </details>
+        </article>
+        <article class="viz-card">
+          <h3>Auth and live data notes</h3>
+          <div class="auth-note-list">
+            <div class="note-line"><strong>Graph scopes:</strong> Directory.Read.All, Policy.Read.All, DeviceManagementManagedDevices.Read.All, CloudPC.Read.All.</div>
+            <div class="note-line"><strong>Log Analytics:</strong> use read-only KQL via Invoke-AzOperationalInsightsQuery for AVD or operations signals.</div>
+            <div class="note-line"><strong>Fetcher interface:</strong> register <code>window.mwReferenceFetchers.graph</code> to supply this page with a validated contract.</div>
+            <div class="note-line"><strong>Default behavior:</strong> sample data stays active until a validated JSON upload or registered live fetcher succeeds.</div>
+          </div>
+        </article>
+        <article class="viz-card">
+          <h3>Assumptions and scoring</h3>
+          <div class="assumptions-wrap" id="assumptionsWrap"></div>
+        </article>
+        <article class="readme-card">
+          <h3>Inline README</h3>
+          <details open>
+            <summary>How to re-skin and feed real data</summary>
+            <div>
+              <p>1. Update the CSS variables in the top-level config section if you want client-brandable colors or a logo slot.</p>
+              <p>2. Keep the same JSON contract. The PowerShell generator can emit a live-shaped JSON sidecar and a stamped HTML copy.</p>
+              <p>3. Uploaded JSON is validated structurally before it is rendered; the file is never executed and no HTML from it is injected.</p>
+              <p>4. For public sharing, keep generic tenant names, regions, and device labels. The default samples are already sanitized fixtures.</p>
+            </div>
+          </details>
+        </article>
+      </div>
+    </section>
+  </section>
+
+  <footer class="footer-card">
+    <div class="footer-grid">
+      <div>
+        <h3>Assumptions</h3>
+        <p id="footerAssumptions"></p>
+      </div>
+      <div>
+        <h3>How scores work</h3>
+        <p>Coverage combines deployed components, pillar presence, and telemetry status. Adoption is the mean of component adoption signals.</p>
+      </div>
+      <div>
+        <h3>Data source notice</h3>
+        <p id="footerSource"></p>
+      </div>
+      <div>
+        <h3>Version</h3>
+        <ul>
+          <li id="footerVersion"></li>
+          <li>Public-safe fixture mode by default</li>
+          <li>Works from file:// with optional online enhancements</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+const CONFIG = {
+  companyNameToken: "Neutral",
+  defaultTheme: "dark",
+  selectedComponentId: "entra-id",
+  sort: {
+    componentTable: { key: "layer", direction: 1 },
+    legacyTable: { key: "status", direction: 1 }
+  },
+  scoringWeights: {
+    coverage: 0.45,
+    adoption: 0.35,
+    health: 0.20
+  },
+  layerColors: {
+    identity: "#58a6ff",
+    device: "#3fb950",
+    workload: "#d29922",
+    data: "#f78166",
+    network: "#a371f7",
+    ops: "#79c0ff"
+  },
+  zeroTrustPillars: ["Identity", "Devices", "Apps", "Data", "Network"]
+};
+
+const INITIAL_OVERRIDE = {
+  data: window.__MW_INITIAL_DATA__ || null,
+  mode: window.__MW_INITIAL_MODE__ || null,
+  label: window.__MW_INITIAL_LABEL__ || null,
+  theme: window.__MW_INITIAL_THEME__ || null
+};
+
+const SAMPLE_DATASETS = {
+  healthy: {
+    version: "1.0",
+    generated: "2026-04-23T08:30:00Z",
+    mode: "sample",
+    assumptions: [
+      "Healthy sample shows a mostly deployed cloud-native reference stack.",
+      "AVD and W365 operational signals are represented as sanitized adoption indicators.",
+      "Region labels and tenant name are fixtures only."
+    ],
+    tenant: { displayName: "Contoso", regions: ["westeurope", "eastus", "uksouth", "australiaeast"] },
+    layers: [
+      {
+        id: "identity",
+        label: "Identity & Access",
+        components: [
+          {
+            id: "entra-id",
+            name: "Microsoft Entra ID",
+            category: "Identity",
+            legacy: ["Active Directory (on-prem)", "ADFS"],
+            modernReplaces: ["ADFS", "Password sync gaps"],
+            dependencies: ["intune", "conditional-access", "defender-endpoint"],
+            zeroTrustPillars: ["Identity"],
+            docs: "https://learn.microsoft.com/en-us/entra/fundamentals/whatis",
+            telemetry: {
+              status: "pass",
+              adoption: 0.96,
+              signalSummary: "MFA coverage at 94% with no critical auth drift.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          },
+          {
+            id: "conditional-access",
+            name: "Conditional Access",
+            category: "Identity",
+            legacy: ["VPN-only access controls"],
+            modernReplaces: ["Static perimeter rules"],
+            dependencies: ["entra-id", "intune"],
+            zeroTrustPillars: ["Identity", "Devices", "Network"],
+            docs: "https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview",
+            telemetry: {
+              status: "pass",
+              adoption: 0.91,
+              signalSummary: "Baseline and privileged access policies enabled across target personas.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          },
+          {
+            id: "pim",
+            name: "Privileged Identity Management",
+            category: "Identity",
+            legacy: ["Permanent admin roles"],
+            modernReplaces: ["Always-on privileged accounts"],
+            dependencies: ["entra-id"],
+            zeroTrustPillars: ["Identity"],
+            docs: "https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-configure",
+            telemetry: {
+              status: "pass",
+              adoption: 0.83,
+              signalSummary: "Eligible role assignments cover all cloud platform admin tiers.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          }
+        ]
+      },
+      {
+        id: "device",
+        label: "Device Management",
+        components: [
+          {
+            id: "intune",
+            name: "Microsoft Intune",
+            category: "Device",
+            legacy: ["SCCM-only management", "GPO-heavy configuration"],
+            modernReplaces: ["Settings Catalog", "Endpoint security baselines"],
+            dependencies: ["entra-id"],
+            zeroTrustPillars: ["Devices", "Apps", "Data"],
+            docs: "https://learn.microsoft.com/en-us/mem/intune/fundamentals/what-is-intune",
+            telemetry: {
+              status: "pass",
+              adoption: 0.88,
+              signalSummary: "Enrolled device posture is stable with compliance above 92%.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          },
+          {
+            id: "autopilot",
+            name: "Windows Autopilot",
+            category: "Device",
+            legacy: ["MDT task sequences", "Imaging rooms"],
+            modernReplaces: ["Factory-to-user deployment"],
+            dependencies: ["entra-id", "intune"],
+            zeroTrustPillars: ["Devices", "Identity"],
+            docs: "https://learn.microsoft.com/en-us/autopilot/windows-autopilot",
+            telemetry: {
+              status: "pass",
+              adoption: 0.81,
+              signalSummary: "Autopilot profile assignment covers all new joiner devices in target markets.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          },
+          {
+            id: "autopatch",
+            name: "Windows Autopatch",
+            category: "Device",
+            legacy: ["Manual ring scheduling"],
+            modernReplaces: ["Ring automation"],
+            dependencies: ["intune"],
+            zeroTrustPillars: ["Devices"],
+            docs: "https://learn.microsoft.com/en-us/windows/deployment/windows-autopatch/overview/windows-autopatch-overview",
+            telemetry: {
+              status: "pass",
+              adoption: 0.78,
+              signalSummary: "Ring coverage stable with no major SLA misses in the current sample.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          }
+        ]
+      },
+      {
+        id: "workload",
+        label: "Workload Platforms",
+        components: [
+          {
+            id: "windows-365",
+            name: "Windows 365",
+            category: "Workload",
+            legacy: ["Dedicated VDI farms"],
+            modernReplaces: ["Fixed desktop pools"],
+            dependencies: ["entra-id", "intune", "defender-endpoint"],
+            zeroTrustPillars: ["Devices", "Apps", "Network"],
+            docs: "https://learn.microsoft.com/en-us/windows-365/overview",
+            telemetry: {
+              status: "pass",
+              adoption: 0.84,
+              signalSummary: "Cloud PC provisioning stable with no active capacity alerts.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          },
+          {
+            id: "avd",
+            name: "Azure Virtual Desktop",
+            category: "Workload",
+            legacy: ["Session-based RDSH"],
+            modernReplaces: ["Pooled host farms"],
+            dependencies: ["entra-id", "log-analytics"],
+            zeroTrustPillars: ["Apps", "Network", "Devices"],
+            docs: "https://learn.microsoft.com/en-us/azure/virtual-desktop/overview",
+            telemetry: {
+              status: "pass",
+              adoption: 0.76,
+              signalSummary: "Host pool load remains under target thresholds in both active regions.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          },
+          {
+            id: "m365-apps",
+            name: "Microsoft 365 Apps",
+            category: "Workload",
+            legacy: ["MSI Office deployment"],
+            modernReplaces: ["Cloud update channels"],
+            dependencies: ["intune"],
+            zeroTrustPillars: ["Apps", "Data"],
+            docs: "https://learn.microsoft.com/en-us/deployoffice/overview-microsoft-365-apps",
+            telemetry: {
+              status: "pass",
+              adoption: 0.93,
+              signalSummary: "Monthly enterprise channel rollout is within tolerance.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          }
+        ]
+      },
+      {
+        id: "data",
+        label: "Data Protection",
+        components: [
+          {
+            id: "purview",
+            name: "Microsoft Purview",
+            category: "Data",
+            legacy: ["Manual label policy"],
+            modernReplaces: ["Sensitivity labeling"],
+            dependencies: ["entra-id", "m365-apps"],
+            zeroTrustPillars: ["Data", "Apps"],
+            docs: "https://learn.microsoft.com/en-us/purview/purview",
+            telemetry: {
+              status: "pass",
+              adoption: 0.72,
+              signalSummary: "Label coverage rising steadily across priority collaboration sites.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          },
+          {
+            id: "defender-cloud-apps",
+            name: "Defender for Cloud Apps",
+            category: "Data",
+            legacy: ["Proxy-only CASB"],
+            modernReplaces: ["API-led SaaS visibility"],
+            dependencies: ["entra-id"],
+            zeroTrustPillars: ["Apps", "Data"],
+            docs: "https://learn.microsoft.com/en-us/defender-cloud-apps/what-is-defender-for-cloud-apps",
+            telemetry: {
+              status: "pass",
+              adoption: 0.74,
+              signalSummary: "Session controls enabled for sanctioned productivity apps.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          }
+        ]
+      },
+      {
+        id: "network",
+        label: "Network & Edge",
+        components: [
+          {
+            id: "global-secure-access",
+            name: "Global Secure Access",
+            category: "Network",
+            legacy: ["VPN concentrators"],
+            modernReplaces: ["Per-app secure access"],
+            dependencies: ["conditional-access", "entra-id"],
+            zeroTrustPillars: ["Network", "Identity"],
+            docs: "https://learn.microsoft.com/en-us/entra/global-secure-access/overview-what-is-global-secure-access",
+            telemetry: {
+              status: "pass",
+              adoption: 0.69,
+              signalSummary: "Pilot regions active with identity-aware routing in place.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          },
+          {
+            id: "azure-vwan",
+            name: "Azure Virtual WAN",
+            category: "Network",
+            legacy: ["Hub-spoke only WAN ingress"],
+            modernReplaces: ["Managed regional transit"],
+            dependencies: ["avd"],
+            zeroTrustPillars: ["Network"],
+            docs: "https://learn.microsoft.com/en-us/azure/virtual-wan/virtual-wan-about",
+            telemetry: {
+              status: "pass",
+              adoption: 0.65,
+              signalSummary: "Regional transit is aligned to AVD and branch egress targets.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          }
+        ]
+      },
+      {
+        id: "ops",
+        label: "Operations & Insights",
+        components: [
+          {
+            id: "log-analytics",
+            name: "Azure Monitor + Log Analytics",
+            category: "Ops",
+            legacy: ["Fragmented event collectors"],
+            modernReplaces: ["Central KQL analytics"],
+            dependencies: ["avd", "intune"],
+            zeroTrustPillars: ["Devices", "Apps", "Network"],
+            docs: "https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-query-overview",
+            telemetry: {
+              status: "pass",
+              adoption: 0.86,
+              signalSummary: "AVD, Windows 365, and endpoint signals converge into shared workbooks.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          },
+          {
+            id: "endpoint-analytics",
+            name: "Endpoint Analytics",
+            category: "Ops",
+            legacy: ["Manual logon-time sampling"],
+            modernReplaces: ["DEX posture telemetry"],
+            dependencies: ["intune"],
+            zeroTrustPillars: ["Devices"],
+            docs: "https://learn.microsoft.com/en-us/mem/analytics/overview",
+            telemetry: {
+              status: "pass",
+              adoption: 0.82,
+              signalSummary: "Experience score remains above the target benchmark.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          },
+          {
+            id: "defender-endpoint",
+            name: "Defender for Endpoint",
+            category: "Ops",
+            legacy: ["Standalone AV stacks"],
+            modernReplaces: ["Unified endpoint protection"],
+            dependencies: ["intune", "entra-id"],
+            zeroTrustPillars: ["Devices", "Apps", "Data"],
+            docs: "https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-endpoint",
+            telemetry: {
+              status: "pass",
+              adoption: 0.89,
+              signalSummary: "Onboarding holds above 95% for in-scope managed endpoints.",
+              lastChecked: "2026-04-23T08:30:00Z"
+            }
+          }
+        ]
+      }
+    ],
+    edges: [
+      { from: "entra-id", to: "intune", kind: "required" },
+      { from: "entra-id", to: "conditional-access", kind: "required" },
+      { from: "conditional-access", to: "global-secure-access", kind: "required" },
+      { from: "intune", to: "autopilot", kind: "required" },
+      { from: "intune", to: "autopatch", kind: "required" },
+      { from: "intune", to: "windows-365", kind: "required" },
+      { from: "log-analytics", to: "avd", kind: "dataflow" },
+      { from: "m365-apps", to: "purview", kind: "optional" },
+      { from: "defender-endpoint", to: "windows-365", kind: "dataflow" },
+      { from: "azure-vwan", to: "avd", kind: "required" }
+    ],
+    legacyMap: [
+      { legacy: "GPO", modern: ["Intune Settings Catalog", "Configuration Profiles"], status: "Near complete", owner: "Device engineering", notes: "Only kiosk exceptions remain." },
+      { legacy: "ADFS", modern: ["Microsoft Entra ID", "Conditional Access"], status: "Retired", owner: "Identity platform", notes: "Break-glass documented separately." },
+      { legacy: "MDT imaging", modern: ["Windows Autopilot"], status: "Actively reducing", owner: "End-user compute", notes: "Lab rebuild path retained for hardware repair only." },
+      { legacy: "Standalone VPN profiles", modern: ["Global Secure Access", "Conditional Access"], status: "Pilot", owner: "Network engineering", notes: "Regional migration begins with knowledge workers." },
+      { legacy: "SCCM-only app delivery", modern: ["Intune", "Microsoft 365 Apps"], status: "Hybrid", owner: "Client management", notes: "Large Win32 packages still co-managed." }
+    ]
+  },
+  degraded: {
+    version: "1.0",
+    generated: "2026-04-23T08:45:00Z",
+    mode: "sample",
+    assumptions: [
+      "Degraded sample introduces drift in access, patching, and data labeling.",
+      "Tenant and region names remain sanitized fixtures.",
+      "Operational gaps are illustrative and designed to stress-test the UI."
+    ],
+    tenant: { displayName: "Contoso", regions: ["westeurope", "eastus", "southeastasia"] },
+    layers: [],
+    edges: [],
+    legacyMap: []
+  }
+};
+
+SAMPLE_DATASETS.degraded.layers = JSON.parse(JSON.stringify(SAMPLE_DATASETS.healthy.layers));
+SAMPLE_DATASETS.degraded.edges = JSON.parse(JSON.stringify(SAMPLE_DATASETS.healthy.edges));
+SAMPLE_DATASETS.degraded.legacyMap = JSON.parse(JSON.stringify(SAMPLE_DATASETS.healthy.legacyMap));
+
+const degrade = (componentId, changes) => {
+  for (const layer of SAMPLE_DATASETS.degraded.layers) {
+    const component = layer.components.find(item => item.id === componentId);
+    if (component) {
+      Object.assign(component.telemetry, changes.telemetry || {});
+      if (changes.dependencies) {
+        component.dependencies = changes.dependencies;
+      }
+      return;
+    }
+  }
+};
+
+degrade("conditional-access", {
+  telemetry: {
+    status: "warn",
+    adoption: 0.73,
+    signalSummary: "Two privileged access policies are still report-only; coverage gaps remain in contractor personas."
+  }
+});
+degrade("autopatch", {
+  telemetry: {
+    status: "fail",
+    adoption: 0.52,
+    signalSummary: "Ring presence exists, but critical patch compliance slipped below 70% in one region."
+  }
+});
+degrade("windows-365", {
+  telemetry: {
+    status: "warn",
+    adoption: 0.64,
+    signalSummary: "Cloud PC adoption is uneven and one capacity pool is approaching allocation limits."
+  }
+});
+degrade("purview", {
+  telemetry: {
+    status: "fail",
+    adoption: 0.44,
+    signalSummary: "Sensitivity label coverage stalled; oversharing review backlog remains high."
+  }
+});
+degrade("global-secure-access", {
+  telemetry: {
+    status: "warn",
+    adoption: 0.39,
+    signalSummary: "Pilot remains partial and remote access is split between modern and legacy controls."
+  }
+});
+degrade("endpoint-analytics", {
+  telemetry: {
+    status: "warn",
+    adoption: 0.61,
+    signalSummary: "DEX instrumentation is inconsistent, reducing confidence in regional experience scoring."
+  }
+});
+
+SAMPLE_DATASETS.degraded.legacyMap[0].status = "Large pockets remain";
+SAMPLE_DATASETS.degraded.legacyMap[0].notes = "Policy drift persists across exception-heavy device cohorts.";
+SAMPLE_DATASETS.degraded.legacyMap[3].status = "Stalled";
+SAMPLE_DATASETS.degraded.legacyMap[3].notes = "Legacy VPN remains primary for most remote personas.";
+
+let state = {
+  theme: CONFIG.defaultTheme,
+  activeTab: "architecture",
+  datasetKey: "healthy",
+  mode: "sample",
+  raw: SAMPLE_DATASETS.healthy,
+  selectedLayer: "all",
+  selectedComponentId: CONFIG.selectedComponentId,
+  search: "",
+  legacySearch: "",
+  sorts: {
+    componentTable: { key: CONFIG.sort.componentTable.key, direction: CONFIG.sort.componentTable.direction },
+    legacyTable: { key: CONFIG.sort.legacyTable.key, direction: CONFIG.sort.legacyTable.direction }
+  }
+};
+
+const ui = {};
+
+document.addEventListener("DOMContentLoaded", async () => {
+  cacheUi();
+  bindEvents();
+  if (INITIAL_OVERRIDE.theme) {
+    state.theme = INITIAL_OVERRIDE.theme;
+  }
+  if (INITIAL_OVERRIDE.data) {
+    state.raw = validateDataset(INITIAL_OVERRIDE.data);
+    state.datasetKey = INITIAL_OVERRIDE.label || "live";
+    state.mode = INITIAL_OVERRIDE.mode || "live";
+    state.selectedComponentId = getFlatComponents(state.raw)[0]?.id || CONFIG.selectedComponentId;
+  }
+  document.body.dataset.theme = state.theme;
+  renderAll();
+});
+
+function cacheUi() {
+  ui.alert = document.getElementById("alert");
+  ui.datasetBadge = document.getElementById("datasetBadge");
+  ui.modeBadge = document.getElementById("modeBadge");
+  ui.sampleSelector = document.getElementById("sampleSelector");
+  ui.fileInput = document.getElementById("fileInput");
+  ui.globalSearch = document.getElementById("globalSearch");
+  ui.bannerHeadline = document.getElementById("bannerHeadline");
+  ui.overallStatus = document.getElementById("overallStatus");
+  ui.scoreline = document.getElementById("scoreline");
+  ui.narrativeLead = document.getElementById("narrativeLead");
+  ui.narrativeBody = document.getElementById("narrativeBody");
+  ui.kpiGrid = document.getElementById("kpiGrid");
+  ui.layerFilters = document.getElementById("layerFilters");
+  ui.diagramSurface = document.getElementById("diagramSurface");
+  ui.componentTableBody = document.querySelector("#componentTable tbody");
+  ui.legacyTableBody = document.querySelector("#legacyTable tbody");
+  ui.legacySearch = document.getElementById("legacySearch");
+  ui.detailName = document.getElementById("detailName");
+  ui.detailCategory = document.getElementById("detailCategory");
+  ui.detailMetrics = document.getElementById("detailMetrics");
+  ui.detailSignal = document.getElementById("detailSignal");
+  ui.detailLegacy = document.getElementById("detailLegacy");
+  ui.detailModern = document.getElementById("detailModern");
+  ui.detailDependencies = document.getElementById("detailDependencies");
+  ui.detailPillars = document.getElementById("detailPillars");
+  ui.detailDocs = document.getElementById("detailDocs");
+  ui.mermaidShell = document.getElementById("mermaidShell");
+  ui.mermaidFallback = document.getElementById("mermaidFallback");
+  ui.mermaidTarget = document.getElementById("mermaidTarget");
+  ui.radarChart = document.getElementById("radarChart");
+  ui.pillarLegend = document.getElementById("pillarLegend");
+  ui.geoMap = document.getElementById("geoMap");
+  ui.regionStack = document.getElementById("regionStack");
+  ui.schemaBlock = document.getElementById("schemaBlock");
+  ui.assumptionsWrap = document.getElementById("assumptionsWrap");
+  ui.footerAssumptions = document.getElementById("footerAssumptions");
+  ui.footerSource = document.getElementById("footerSource");
+  ui.footerVersion = document.getElementById("footerVersion");
+}
+
+function bindEvents() {
+  document.getElementById("themeButton").addEventListener("click", () => {
+    state.theme = state.theme === "dark" ? "light" : "dark";
+    document.body.dataset.theme = state.theme;
+    renderGeo();
+  });
+
+  document.getElementById("printButton").addEventListener("click", () => window.print());
+
+  document.getElementById("connectButton").addEventListener("click", connectLiveFetcher);
+
+  document.getElementById("toggleMermaid").addEventListener("click", async () => {
+    ui.mermaidShell.hidden = !ui.mermaidShell.hidden;
+    if (!ui.mermaidShell.hidden) {
+      await renderMermaid();
+    }
+  });
+
+  document.getElementById("exportProductsCsv").addEventListener("click", () => {
+    exportCsv("mw-components.csv", getFilteredComponents().map(componentToRow));
+  });
+
+  document.getElementById("exportLegacyCsv").addEventListener("click", () => {
+    exportCsv("mw-legacy-map.csv", getFilteredLegacyRows());
+  });
+
+  ui.sampleSelector.addEventListener("change", event => {
+    const key = event.target.value;
+    state.datasetKey = key;
+    state.mode = "sample";
+    state.raw = SAMPLE_DATASETS[key];
+    state.selectedLayer = "all";
+    state.selectedComponentId = CONFIG.selectedComponentId;
+    showAlert("", "info", false);
+    renderAll();
+  });
+
+  ui.fileInput.addEventListener("change", event => {
+    const [file] = event.target.files;
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result));
+        const validated = validateDataset(parsed);
+        state.raw = validated;
+        state.datasetKey = "uploaded";
+        state.mode = "upload";
+        state.selectedLayer = "all";
+        state.selectedComponentId = getFlatComponents(validated)[0]?.id || CONFIG.selectedComponentId;
+        showAlert("Validated custom JSON contract and loaded it into the explorer.", "info", true);
+        renderAll();
+      } catch (error) {
+        showAlert(`Could not load JSON: ${error.message}`, "error", true);
+      } finally {
+        event.target.value = "";
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  ui.globalSearch.addEventListener("input", event => {
+    state.search = event.target.value.trim().toLowerCase();
+    renderArchitecture();
+    renderComponentTable();
+    renderLegacyTable();
+  });
+
+  ui.legacySearch.addEventListener("input", event => {
+    state.legacySearch = event.target.value.trim().toLowerCase();
+    renderLegacyTable();
+  });
+
+  document.querySelectorAll(".tab-button").forEach(button => {
+    button.addEventListener("click", async () => {
+      const tab = button.id.replace("btn-", "");
+      state.activeTab = tab;
+      document.querySelectorAll(".tab-button").forEach(item => item.setAttribute("aria-selected", item === button ? "true" : "false"));
+      document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.toggle("active", panel.id === `tab-${tab}`));
+      if (tab === "geo") {
+        await renderGeo(true);
+      }
+      if (tab === "architecture" && !ui.mermaidShell.hidden) {
+        await renderMermaid();
+      }
+    });
+  });
+
+  document.querySelectorAll("#componentTable th").forEach(header => {
+    header.addEventListener("click", () => updateSort("componentTable", header.dataset.sort));
+  });
+
+  document.querySelectorAll("#legacyTable th").forEach(header => {
+    header.addEventListener("click", () => updateSort("legacyTable", header.dataset.sort));
+  });
+}
+
+function renderAll() {
+  const dataset = state.raw;
+  ui.datasetBadge.textContent = state.datasetKey === "uploaded" ? "Uploaded contract" : state.datasetKey === "healthy" ? "Healthy sample" : state.datasetKey === "degraded" ? "Degraded sample" : "Live contract";
+  ui.modeBadge.textContent = state.mode === "sample" ? "Sample" : state.mode === "upload" ? "Upload" : "Live";
+  ui.schemaBlock.textContent = JSON.stringify(JSON.parse(document.getElementById("data-schema").textContent), null, 2);
+  renderBanner(dataset);
+  renderKpis(dataset);
+  renderArchitecture();
+  renderComponentTable();
+  renderLegacyTable();
+  renderZeroTrust();
+  renderGeo();
+  renderMethodology(dataset);
+  renderFooter(dataset);
+}
+
+function renderBanner(dataset) {
+  const components = getFlatComponents(dataset);
+  const deployed = components.filter(component => component.telemetry.adoption >= 0.7).length;
+  const gaps = components.filter(component => component.telemetry.adoption < 0.7).length;
+  const drift = components.filter(component => component.telemetry.status === "warn").length;
+  const failed = components.filter(component => component.telemetry.status === "fail").length;
+  const overall = failed > 0 ? "fail" : drift > 0 ? "warn" : "pass";
+  const statusLabel = overall === "fail" ? "Attention required" : overall === "warn" ? "Watch list" : "Healthy posture";
+  ui.bannerHeadline.textContent = `${deployed}/${components.length} components strongly adopted · ${gaps} gaps · ${drift + failed} issues`;
+  ui.overallStatus.className = `pill status-${overall} status-dot`;
+  ui.overallStatus.textContent = statusLabel;
+  ui.scoreline.innerHTML = [
+    `${dataset.layers.length} layers`,
+    `${dataset.edges.length} dependencies`,
+    `${dataset.legacyMap.length} legacy mappings`,
+    `${dataset.tenant.regions.length} regions`,
+    `${failed} fail`,
+    `${drift} warn`
+  ].map(item => `<span class="pill">${item}</span>`).join("");
+
+  const coverage = Math.round((deployed / components.length) * 100);
+  const narrativeLead = overall === "fail"
+    ? "Legacy debt and telemetry blind spots are now visible in the same map."
+    : overall === "warn"
+      ? "The architecture is mostly in place, but several control-plane migrations are only partially complete."
+      : "The cloud-native stack is broadly deployed, with only contained transition pockets left.";
+  const narrativeBody = `Coverage sits at ${coverage}% across ${dataset.tenant.regions.join(", ")}. The highest friction comes from ${getTopGapText(dataset)}.`;
+  ui.narrativeLead.textContent = narrativeLead;
+  ui.narrativeBody.textContent = narrativeBody;
+}
+
+function renderKpis(dataset) {
+  const components = getFlatComponents(dataset);
+  const deployed = components.filter(component => component.telemetry.adoption >= 0.7).length;
+  const coverage = Math.round((deployed / components.length) * 100);
+  const adoption = Math.round(average(components.map(component => component.telemetry.adoption)) * 100);
+  const pillarScores = getPillarScores(dataset);
+  const zeroTrust = Math.round(average(Object.values(pillarScores)) * 100);
+  const legacyLeft = dataset.legacyMap.filter(row => !/retired|near complete/i.test(row.status)).length;
+  const gaps = components.filter(component => component.telemetry.adoption < 0.7).length;
+  const regions = dataset.tenant.regions.length;
+  const cards = [
+    { label: "Coverage", value: `${coverage}%`, meta: `${deployed} of ${components.length} components strongly adopted`, trend: components.map(component => component.telemetry.adoption) },
+    { label: "Zero Trust score", value: `${zeroTrust}%`, meta: "Identity, devices, apps, data, network", trend: Object.values(pillarScores) },
+    { label: "Legacy items left", value: String(legacyLeft), meta: "Still active or only partially migrated", trend: dataset.legacyMap.map((row, index) => Math.max(0.15, 1 - index / (dataset.legacyMap.length + 2))) },
+    { label: "Modern adoption", value: `${adoption}%`, meta: `${dataset.mode || state.mode} telemetry mode`, trend: dataset.layers.map(layer => average(layer.components.map(component => component.telemetry.adoption))) },
+    { label: "Regions", value: String(regions), meta: dataset.tenant.regions.join(" · "), trend: dataset.tenant.regions.map((_, index) => 0.55 + index * 0.1) },
+    { label: "Gaps", value: String(gaps), meta: gaps === 0 ? "No active issues in current fixture" : "Warn or fail status present", trend: components.map(component => component.telemetry.status === "fail" ? 1 : component.telemetry.status === "warn" ? 0.65 : 0.15) }
+  ];
+  ui.kpiGrid.innerHTML = cards.map(card => `
+    <article class="kpi-card">
+      <div class="kpi-label">${card.label}</div>
+      <div class="kpi-value">${card.value}</div>
+      <div class="kpi-meta">${card.meta}</div>
+      ${renderSparkline(card.trend)}
+    </article>
+  `).join("");
+}
+
+function renderArchitecture() {
+  const dataset = state.raw;
+  renderLayerFilters(dataset.layers);
+  const components = getFilteredComponents();
+  const grouped = dataset.layers
+    .filter(layer => state.selectedLayer === "all" || layer.id === state.selectedLayer)
+    .map((layer, index) => ({
+      layer,
+      index,
+      components: layer.components.filter(component => matchesGlobalSearch(component))
+    }))
+    .filter(entry => entry.components.length > 0);
+
+  ui.diagramSurface.innerHTML = grouped.map(({ layer, index, components }) => `
+    <section class="layer-row">
+      <h3><span class="layer-order">${index + 1}</span><span style="color:${CONFIG.layerColors[layer.id] || "var(--accent)"}">${layer.label}</span></h3>
+      <div class="component-grid">
+        ${components.map(component => `
+          <button class="component-pill ${component.telemetry.status === "pass" ? "pass" : component.telemetry.status === "warn" ? "warn" : component.telemetry.status === "fail" ? "fail" : ""} ${component.id === state.selectedComponentId ? "active" : ""}" data-component-id="${component.id}" type="button">
+            <span class="tiny-status" aria-hidden="true"></span>
+            <span class="name">${component.name}</span>
+            <span class="meta">${component.category} · ${Math.round(component.telemetry.adoption * 100)}% adoption</span>
+          </button>
+        `).join("")}
+      </div>
+    </section>
+  `).join("") || `<div class="map-fallback">No components match the current search or layer filter.</div>`;
+
+  ui.diagramSurface.querySelectorAll(".component-pill").forEach(button => {
+    button.addEventListener("click", () => {
+      state.selectedComponentId = button.dataset.componentId;
+      renderArchitecture();
+      renderSelectedComponent();
+    });
+  });
+
+  if (!components.some(component => component.id === state.selectedComponentId)) {
+    state.selectedComponentId = components[0]?.id || CONFIG.selectedComponentId;
+  }
+  renderSelectedComponent();
+  ui.mermaidFallback.textContent = state.raw.edges.map(edge => `${edge.from} -> ${edge.to} (${edge.kind})`).join("\n");
+}
+
+function renderLayerFilters(layers) {
+  const allButtons = [{ id: "all", label: "All" }, ...layers.map(layer => ({ id: layer.id, label: layer.label }))];
+  ui.layerFilters.innerHTML = allButtons.map(item => `
+    <button type="button" class="layer-filter ${state.selectedLayer === item.id ? "active" : ""}" data-layer-id="${item.id}">${item.label}</button>
+  `).join("");
+  ui.layerFilters.querySelectorAll(".layer-filter").forEach(button => {
+    button.addEventListener("click", () => {
+      state.selectedLayer = button.dataset.layerId;
+      renderArchitecture();
+      renderComponentTable();
+    });
+  });
+}
+
+function renderSelectedComponent() {
+  const component = getFlatComponents(state.raw).find(item => item.id === state.selectedComponentId) || getFlatComponents(state.raw)[0];
+  if (!component) {
+    return;
+  }
+  ui.detailName.textContent = component.name;
+  ui.detailCategory.textContent = `${component.category} · ${getLayerLabelForComponent(component.id)}`;
+  ui.detailMetrics.innerHTML = [
+    `${component.telemetry.status.toUpperCase()} status`,
+    `${Math.round(component.telemetry.adoption * 100)}% adoption`,
+    `${component.dependencies.length} dependencies`
+  ].map(text => `<span class="metric-chip">${text}</span>`).join("");
+  ui.detailSignal.textContent = component.telemetry.signalSummary;
+  ui.detailLegacy.innerHTML = renderTagGroup(component.legacy || ["No legacy mapping recorded"]);
+  ui.detailModern.innerHTML = renderTagGroup(component.modernReplaces || ["No direct replacement noted"]);
+  ui.detailDependencies.innerHTML = renderTagGroup(component.dependencies);
+  ui.detailPillars.innerHTML = renderTagGroup(component.zeroTrustPillars);
+  ui.detailDocs.href = component.docs;
+}
+
+function renderComponentTable() {
+  const rows = [...getFilteredComponents()].sort(createSorter(state.sorts.componentTable.key, state.sorts.componentTable.direction, componentToRow));
+  ui.componentTableBody.innerHTML = rows.map(component => `
+    <tr>
+      <td><button type="button" class="btn" style="min-height:auto;padding:6px 10px;border-radius:10px" data-select-component="${component.id}">${component.name}</button></td>
+      <td>${getLayerLabelForComponent(component.id)}</td>
+      <td><span class="status-dot status-${component.telemetry.status === "pass" ? "pass" : component.telemetry.status === "warn" ? "warn" : component.telemetry.status === "fail" ? "fail" : "warn"}">${component.telemetry.status}</span></td>
+      <td>${Math.round(component.telemetry.adoption * 100)}%</td>
+      <td>${(component.modernReplaces || []).join(", ")}</td>
+      <td>${component.dependencies.join(", ")}</td>
+    </tr>
+  `).join("");
+  ui.componentTableBody.querySelectorAll("[data-select-component]").forEach(button => {
+    button.addEventListener("click", () => {
+      state.selectedComponentId = button.dataset.selectComponent;
+      renderArchitecture();
+      renderSelectedComponent();
+      document.getElementById("tab-architecture").scrollIntoView({ block: "start" });
+    });
+  });
+}
+
+function renderLegacyTable() {
+  const rows = getFilteredLegacyRows().sort(createSorter(state.sorts.legacyTable.key, state.sorts.legacyTable.direction));
+  ui.legacyTableBody.innerHTML = rows.map(row => `
+    <tr>
+      <td>${row.legacy}</td>
+      <td>${Array.isArray(row.modern) ? row.modern.join(", ") : row.modern}</td>
+      <td>${row.status}</td>
+      <td>${row.owner}</td>
+      <td>${row.notes}</td>
+    </tr>
+  `).join("");
+}
+
+function renderZeroTrust() {
+  const scores = getPillarScores(state.raw);
+  const labels = CONFIG.zeroTrustPillars;
+  const points = labels.map((label, index) => ({ label, value: scores[label] || 0, angle: (-90 + index * (360 / labels.length)) * (Math.PI / 180) }));
+  const center = 160;
+  const radius = 110;
+  const levels = [0.25, 0.5, 0.75, 1];
+  const grid = levels.map(level => {
+    const coords = polygonPoints(points.map(point => ({ angle: point.angle, value: level })), center, radius);
+    return `<polygon points="${coords}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"></polygon>`;
+  }).join("");
+  const dataPoints = polygonPoints(points, center, radius);
+  const axes = points.map(point => {
+    const x = center + Math.cos(point.angle) * radius;
+    const y = center + Math.sin(point.angle) * radius;
+    const lx = center + Math.cos(point.angle) * (radius + 22);
+    const ly = center + Math.sin(point.angle) * (radius + 22);
+    return `
+      <line x1="${center}" y1="${center}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,0.14)" stroke-width="1"></line>
+      <text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" fill="currentColor" font-size="11">${point.label}</text>
+    `;
+  }).join("");
+  ui.radarChart.innerHTML = `
+    <circle cx="${center}" cy="${center}" r="${radius + 8}" fill="rgba(255,255,255,0.02)"></circle>
+    ${grid}
+    ${axes}
+    <polygon points="${dataPoints}" fill="rgba(31,111,235,0.24)" stroke="var(--accent-strong)" stroke-width="2"></polygon>
+    ${points.map(point => {
+      const x = center + Math.cos(point.angle) * radius * point.value;
+      const y = center + Math.sin(point.angle) * radius * point.value;
+      return `<circle cx="${x}" cy="${y}" r="5" fill="var(--accent-strong)"></circle>`;
+    }).join("")}
+  `;
+  ui.pillarLegend.innerHTML = labels.map(label => `
+    <div class="legend-item">
+      <h4>${label}</h4>
+      <div>${Math.round((scores[label] || 0) * 100)}% effective coverage</div>
+    </div>
+  `).join("");
+}
+
+async function renderGeo(forceLeaflet = false) {
+  const dataset = state.raw;
+  ui.regionStack.innerHTML = dataset.tenant.regions.map(region => {
+    const related = getFlatComponents(dataset).filter(component => component.telemetry.adoption >= 0.6).slice(0, 4);
+    return `
+      <div class="region-card">
+        <h4>${region}</h4>
+        <div>${related.length} strongly adopted control-plane components mapped in this sample footprint.</div>
+      </div>
+    `;
+  }).join("");
+
+  ui.geoMap.innerHTML = `
+    <div class="map-fallback">
+      <div>
+        <strong>Leaflet map is optional.</strong>
+        <div style="margin-top:8px">The page stays fully useful from file:// even without online map tiles.</div>
+        <svg viewBox="0 0 420 220" role="img" aria-label="Region footprint fallback map">
+          <rect x="20" y="30" width="380" height="160" rx="20" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)"></rect>
+          <circle cx="140" cy="90" r="9" fill="var(--accent-strong)"></circle>
+          <circle cx="205" cy="100" r="9" fill="var(--pass)"></circle>
+          <circle cx="240" cy="78" r="9" fill="var(--warn)"></circle>
+          <circle cx="330" cy="150" r="9" fill="var(--accent-strong)"></circle>
+          <text x="126" y="72" fill="currentColor" font-size="12">UK South</text>
+          <text x="184" y="82" fill="currentColor" font-size="12">West Europe</text>
+          <text x="225" y="60" fill="currentColor" font-size="12">East US</text>
+          <text x="290" y="176" fill="currentColor" font-size="12">APAC</text>
+        </svg>
+      </div>
+    </div>
+  `;
+
+  if (!forceLeaflet) {
+    return;
+  }
+
+  try {
+    if (!window.L) {
+      await loadScript("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js");
+      await loadStyle("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
+    }
+    if (!window.L) {
+      return;
+    }
+    ui.geoMap.innerHTML = "";
+    const map = window.L.map(ui.geoMap).setView([25, 10], 1.4);
+    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 6,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+    const coords = {
+      westeurope: [52.37, 4.9],
+      eastus: [37.43, -78.65],
+      uksouth: [51.5, -0.12],
+      australiaeast: [-33.86, 151.21],
+      southeastasia: [1.29, 103.85]
+    };
+    state.raw.tenant.regions.forEach(region => {
+      const point = coords[region] || [20, 0];
+      window.L.circleMarker(point, {
+        radius: 8,
+        color: CONFIG.layerColors.identity,
+        fillColor: CONFIG.layerColors.workload,
+        fillOpacity: 0.9
+      }).bindPopup(`<strong>${region}</strong><br>Sanitized Modern Workplace region fixture.`).addTo(map);
+    });
+  } catch {
+    // Keep fallback view without surfacing an error because offline mode is valid.
+  }
+}
+
+function renderMethodology(dataset) {
+  ui.assumptionsWrap.innerHTML = `
+    <div class="legend-stack">
+      ${dataset.assumptions.map(item => `<div class="legend-item">${item}</div>`).join("")}
+      <div class="legend-item">Coverage formula = deployed components * ${CONFIG.scoringWeights.coverage}, adoption * ${CONFIG.scoringWeights.adoption}, telemetry health * ${CONFIG.scoringWeights.health}.</div>
+      <div class="legend-item">Status colors: green = pass, amber = warn, red = fail. Unknown remains neutral.</div>
+    </div>
+  `;
+}
+
+function renderFooter(dataset) {
+  ui.footerAssumptions.textContent = dataset.assumptions.join(" ");
+  ui.footerSource.textContent = state.mode === "sample"
+    ? "Embedded healthy/degraded fixtures with a pluggable Graph/KQL fetcher interface."
+    : state.mode === "upload"
+      ? "User-uploaded JSON validated against the published contract."
+      : "Registered live fetcher returned a valid Modern Workplace contract.";
+  ui.footerVersion.textContent = `Contract v${dataset.version} · ${new Date(dataset.generated).toLocaleString()}`;
+}
+
+function getFlatComponents(dataset) {
+  return dataset.layers.flatMap(layer => layer.components.map(component => ({ ...component, layerId: layer.id, layerLabel: layer.label })));
+}
+
+function getFilteredComponents() {
+  return getFlatComponents(state.raw).filter(component => {
+    const layerOk = state.selectedLayer === "all" || component.layerId === state.selectedLayer;
+    return layerOk && matchesGlobalSearch(component);
+  });
+}
+
+function getFilteredLegacyRows() {
+  return state.raw.legacyMap.filter(row => {
+    const haystack = `${row.legacy} ${(row.modern || []).join(" ")} ${row.status} ${row.owner} ${row.notes}`.toLowerCase();
+    const searchOk = !state.search || haystack.includes(state.search);
+    const legacyOk = !state.legacySearch || haystack.includes(state.legacySearch);
+    return searchOk && legacyOk;
+  });
+}
+
+function matchesGlobalSearch(component) {
+  if (!state.search) {
+    return true;
+  }
+  const text = [
+    component.name,
+    component.category,
+    component.layerLabel,
+    ...(component.legacy || []),
+    ...(component.modernReplaces || []),
+    ...(component.dependencies || []),
+    ...(component.zeroTrustPillars || []),
+    component.telemetry.signalSummary,
+    state.raw.tenant.regions.join(" ")
+  ].join(" ").toLowerCase();
+  return text.includes(state.search);
+}
+
+function getLayerLabelForComponent(componentId) {
+  return state.raw.layers.find(layer => layer.components.some(component => component.id === componentId))?.label || "Unknown layer";
+}
+
+function average(values) {
+  if (!values.length) {
+    return 0;
+  }
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function getPillarScores(dataset) {
+  const components = getFlatComponents(dataset);
+  const scores = Object.fromEntries(CONFIG.zeroTrustPillars.map(pillar => [pillar, 0]));
+  CONFIG.zeroTrustPillars.forEach(pillar => {
+    const matching = components.filter(component => component.zeroTrustPillars.includes(pillar));
+    scores[pillar] = matching.length ? average(matching.map(component => component.telemetry.adoption * statusWeight(component.telemetry.status))) : 0;
+  });
+  return scores;
+}
+
+function statusWeight(status) {
+  if (status === "pass") return 1;
+  if (status === "warn") return 0.72;
+  if (status === "fail") return 0.45;
+  return 0.55;
+}
+
+function getTopGapText(dataset) {
+  const components = getFlatComponents(dataset)
+    .filter(component => component.telemetry.status !== "pass")
+    .sort((left, right) => left.telemetry.adoption - right.telemetry.adoption);
+  if (!components.length) {
+    return "contained modernization tail work rather than platform-wide failure";
+  }
+  return `${components[0].name.toLowerCase()} and ${components[1] ? components[1].name.toLowerCase() : "its adjacent dependencies"}`;
+}
+
+function renderSparkline(values) {
+  const normalized = values.map(value => Math.max(0.08, Math.min(1, value)));
+  const width = 140;
+  const height = 28;
+  const points = normalized.map((value, index) => {
+    const x = (width / Math.max(1, normalized.length - 1)) * index;
+    const y = height - value * height;
+    return `${x},${y}`;
+  }).join(" ");
+  return `
+    <svg class="sparkline" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-hidden="true">
+      <polyline fill="none" stroke="var(--accent-strong)" stroke-width="2" points="${points}"></polyline>
+    </svg>
+  `;
+}
+
+function renderTagGroup(items) {
+  if (!items || !items.length) {
+    return `<span class="tag">None recorded</span>`;
+  }
+  return items.map(item => `<span class="tag">${item}</span>`).join("");
+}
+
+function polygonPoints(points, center, radius) {
+  return points.map(point => {
+    const x = center + Math.cos(point.angle) * radius * point.value;
+    const y = center + Math.sin(point.angle) * radius * point.value;
+    return `${x},${y}`;
+  }).join(" ");
+}
+
+function componentToRow(component) {
+  return {
+    name: component.name,
+    layer: getLayerLabelForComponent(component.id),
+    status: component.telemetry.status,
+    adoption: Math.round(component.telemetry.adoption * 100),
+    legacy: (component.modernReplaces || []).join(" | "),
+    dependencies: component.dependencies.join(" | ")
+  };
+}
+
+function createSorter(key, direction, mapper) {
+  return (left, right) => {
+    const leftValue = mapper ? mapper(left)[key] : normalizeCell(left[key]);
+    const rightValue = mapper ? mapper(right)[key] : normalizeCell(right[key]);
+    if (leftValue > rightValue) return direction;
+    if (leftValue < rightValue) return -direction;
+    return 0;
+  };
+}
+
+function normalizeCell(value) {
+  if (Array.isArray(value)) {
+    return value.join(" ");
+  }
+  return typeof value === "string" ? value.toLowerCase() : value;
+}
+
+function updateSort(tableKey, sortKey) {
+  const current = state.sorts[tableKey];
+  if (current.key === sortKey) {
+    current.direction *= -1;
+  } else {
+    current.key = sortKey;
+    current.direction = 1;
+  }
+  if (tableKey === "componentTable") {
+    renderComponentTable();
+  } else {
+    renderLegacyTable();
+  }
+}
+
+function exportCsv(fileName, rows) {
+  if (!rows.length) {
+    showAlert("There is nothing to export for the current filter state.", "info", true);
+    return;
+  }
+  const headers = Object.keys(rows[0]);
+  const lines = [headers.join(",")].concat(rows.map(row => headers.map(header => csvEscape(row[header])).join(",")));
+  const blob = new Blob([lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const anchor = document.createElement("a");
+  anchor.href = URL.createObjectURL(blob);
+  anchor.download = fileName;
+  anchor.click();
+  URL.revokeObjectURL(anchor.href);
+}
+
+function csvEscape(value) {
+  const text = String(value ?? "");
+  if (/[",\n]/.test(text)) {
+    return `"${text.replace(/"/g, '""')}"`;
+  }
+  return text;
+}
+
+function validateDataset(input) {
+  if (!input || typeof input !== "object") {
+    throw new Error("Root JSON value must be an object.");
+  }
+  if (!Array.isArray(input.layers) || !Array.isArray(input.edges) || !Array.isArray(input.legacyMap)) {
+    throw new Error("JSON must include layers, edges, and legacyMap arrays.");
+  }
+  if (!input.tenant || !Array.isArray(input.tenant.regions)) {
+    throw new Error("JSON must include tenant.displayName and tenant.regions.");
+  }
+  input.layers.forEach(layer => {
+    if (!Array.isArray(layer.components)) {
+      throw new Error(`Layer ${layer.id || "unknown"} is missing a components array.`);
+    }
+    layer.components.forEach(component => {
+      if (!component.id || !component.name || !component.telemetry) {
+        throw new Error(`A component in layer ${layer.id || "unknown"} is missing id, name, or telemetry.`);
+      }
+      if (!["pass", "warn", "fail", "unknown"].includes(component.telemetry.status)) {
+        throw new Error(`Component ${component.name} has an invalid telemetry.status value.`);
+      }
+      if (typeof component.telemetry.adoption !== "number") {
+        throw new Error(`Component ${component.name} must include numeric telemetry.adoption.`);
+      }
+    });
+  });
+  return input;
+}
+
+async function connectLiveFetcher() {
+  try {
+    if (!window.mwReferenceFetchers || typeof window.mwReferenceFetchers.graph !== "function") {
+      showAlert("No live fetcher is registered in this HTML. Use the PowerShell generator or inject window.mwReferenceFetchers.graph to provide a validated contract.", "info", true);
+      return;
+    }
+    const result = await window.mwReferenceFetchers.graph();
+    state.raw = validateDataset(result);
+    state.datasetKey = "live";
+    state.mode = "live";
+    state.selectedLayer = "all";
+    state.selectedComponentId = getFlatComponents(state.raw)[0]?.id || CONFIG.selectedComponentId;
+    renderAll();
+    showAlert("Live fetcher returned a valid contract and the dashboard has been updated.", "info", true);
+  } catch (error) {
+    showAlert(`Live fetch failed: ${error.message}`, "error", true);
+  }
+}
+
+function showAlert(message, kind = "info", visible = true) {
+  ui.alert.textContent = message;
+  ui.alert.className = `alert ${kind}${visible && message ? " show" : ""}`;
+}
+
+async function renderMermaid() {
+  const definition = buildMermaidDefinition(state.raw.edges);
+  ui.mermaidFallback.textContent = definition;
+  try {
+    if (!window.mermaid) {
+      await loadScript("https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js");
+    }
+    if (!window.mermaid) {
+      return;
+    }
+    window.mermaid.initialize({ startOnLoad: false, theme: state.theme === "dark" ? "dark" : "neutral" });
+    const { svg } = await window.mermaid.render(`mw-mermaid-${Date.now()}`, definition);
+    ui.mermaidTarget.innerHTML = svg;
+  } catch {
+    ui.mermaidTarget.innerHTML = "";
+  }
+}
+
+function buildMermaidDefinition(edges) {
+  const lines = ["graph LR"];
+  edges.forEach(edge => {
+    const arrow = edge.kind === "optional" ? "-.->" : edge.kind === "dataflow" ? "==>" : "-->";
+    lines.push(`  ${sanitizeId(edge.from)} ${arrow} ${sanitizeId(edge.to)}`);
+  });
+  return lines.join("\n");
+}
+
+function sanitizeId(text) {
+  return String(text).replace(/[^a-zA-Z0-9_]/g, "_");
+}
+
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const existing = Array.from(document.scripts).find(script => script.src === url);
+    if (existing) {
+      existing.addEventListener("load", resolve, { once: true });
+      existing.addEventListener("error", reject, { once: true });
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = url;
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+function loadStyle(url) {
+  return new Promise(resolve => {
+    if (Array.from(document.styleSheets).some(sheet => sheet.href === url)) {
+      resolve();
+      return;
+    }
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = url;
+    link.onload = resolve;
+    link.onerror = resolve;
+    document.head.appendChild(link);
+  });
+}
+</script>
+<script>window.__MW_INITIAL_DATA__ = {"version":"1.0","generated":"2026-04-23T18:16:49.5129543-04:00","mode":"sample","assumptions":["Healthy sample shows a mostly deployed cloud-native Modern Workplace estate.","All names, regions, and signal summaries are sanitized fixtures.","The JSON contract is intentionally simple so live Graph or KQL collectors can populate it safely."],"tenant":{"displayName":"Contoso","regions":["westeurope","eastus","uksouth","australiaeast"]},"layers":[{"id":"identity","label":"Identity & Access","components":[{"id":"entra-id","name":"Microsoft Entra ID","category":"Identity","legacy":["Active Directory (on-prem)","ADFS"],"modernReplaces":["ADFS","Password sync gaps"],"dependencies":["intune","conditional-access"],"zeroTrustPillars":["Identity"],"docs":"https://learn.microsoft.com/en-us/entra/fundamentals/whatis","telemetry":{"status":"pass","adoption":0.96,"signalSummary":"MFA coverage at 94% with no critical auth drift.","lastChecked":"2026-04-23T08:30:00Z"}},{"id":"conditional-access","name":"Conditional Access","category":"Identity","legacy":["VPN-only access controls"],"modernReplaces":["Static perimeter rules"],"dependencies":["entra-id","intune"],"zeroTrustPillars":["Identity","Devices","Network"],"docs":"https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview","telemetry":{"status":"pass","adoption":0.91,"signalSummary":"Target persona policies enabled across privileged and remote access paths.","lastChecked":"2026-04-23T08:30:00Z"}}]},{"id":"device","label":"Device Management","components":[{"id":"intune","name":"Microsoft Intune","category":"Device","legacy":["SCCM-only management","GPO-heavy configuration"],"modernReplaces":["Settings Catalog","Endpoint security baselines"],"dependencies":["entra-id"],"zeroTrustPillars":["Devices","Apps","Data"],"docs":"https://learn.microsoft.com/en-us/mem/intune/fundamentals/what-is-intune","telemetry":{"status":"pass","adoption":0.88,"signalSummary":"Managed device compliance remains above 92% in all sample regions.","lastChecked":"2026-04-23T08:30:00Z"}},{"id":"autopatch","name":"Windows Autopatch","category":"Device","legacy":["Manual ring scheduling"],"modernReplaces":["Ring automation"],"dependencies":["intune"],"zeroTrustPillars":["Devices"],"docs":"https://learn.microsoft.com/en-us/windows/deployment/windows-autopatch/overview/windows-autopatch-overview","telemetry":{"status":"pass","adoption":0.78,"signalSummary":"Ring coverage stable with no major SLA misses in the sample estate.","lastChecked":"2026-04-23T08:30:00Z"}}]},{"id":"workload","label":"Workload Platforms","components":[{"id":"windows-365","name":"Windows 365","category":"Workload","legacy":["Dedicated VDI farms"],"modernReplaces":["Fixed desktop pools"],"dependencies":["entra-id","intune"],"zeroTrustPillars":["Devices","Apps","Network"],"docs":"https://learn.microsoft.com/en-us/windows-365/overview","telemetry":{"status":"pass","adoption":0.84,"signalSummary":"Cloud PC provisioning stable with no active capacity alerts.","lastChecked":"2026-04-23T08:30:00Z"}},{"id":"avd","name":"Azure Virtual Desktop","category":"Workload","legacy":["Session-based RDSH"],"modernReplaces":["Pooled host farms"],"dependencies":["entra-id","log-analytics"],"zeroTrustPillars":["Apps","Network","Devices"],"docs":"https://learn.microsoft.com/en-us/azure/virtual-desktop/overview","telemetry":{"status":"pass","adoption":0.76,"signalSummary":"Host pool load remains under target thresholds in both active regions.","lastChecked":"2026-04-23T08:30:00Z"}}]},{"id":"data","label":"Data Protection","components":[{"id":"purview","name":"Microsoft Purview","category":"Data","legacy":["Manual label policy"],"modernReplaces":["Sensitivity labeling"],"dependencies":["entra-id"],"zeroTrustPillars":["Data","Apps"],"docs":"https://learn.microsoft.com/en-us/purview/purview","telemetry":{"status":"pass","adoption":0.72,"signalSummary":"Label coverage is rising steadily across priority collaboration sites.","lastChecked":"2026-04-23T08:30:00Z"}}]},{"id":"network","label":"Network & Edge","components":[{"id":"global-secure-access","name":"Global Secure Access","category":"Network","legacy":["VPN concentrators"],"modernReplaces":["Per-app secure access"],"dependencies":["conditional-access","entra-id"],"zeroTrustPillars":["Network","Identity"],"docs":"https://learn.microsoft.com/en-us/entra/global-secure-access/overview-what-is-global-secure-access","telemetry":{"status":"pass","adoption":0.69,"signalSummary":"Pilot regions active with identity-aware routing in place.","lastChecked":"2026-04-23T08:30:00Z"}}]},{"id":"ops","label":"Operations & Insights","components":[{"id":"log-analytics","name":"Azure Monitor + Log Analytics","category":"Ops","legacy":["Fragmented event collectors"],"modernReplaces":["Central KQL analytics"],"dependencies":["avd","intune"],"zeroTrustPillars":["Devices","Apps","Network"],"docs":"https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-query-overview","telemetry":{"status":"pass","adoption":0.86,"signalSummary":"AVD and endpoint signals converge into a shared operations workbook.","lastChecked":"2026-04-23T08:30:00Z"}}]}],"edges":[{"from":"entra-id","to":"intune","kind":"required"},{"from":"entra-id","to":"conditional-access","kind":"required"},{"from":"conditional-access","to":"global-secure-access","kind":"required"},{"from":"intune","to":"autopatch","kind":"required"},{"from":"intune","to":"windows-365","kind":"required"},{"from":"log-analytics","to":"avd","kind":"dataflow"}],"legacyMap":[{"legacy":"GPO","modern":["Intune Settings Catalog","Configuration Profiles"],"status":"Near complete","owner":"Device engineering","notes":"Only kiosk exceptions remain."},{"legacy":"ADFS","modern":["Microsoft Entra ID","Conditional Access"],"status":"Retired","owner":"Identity platform","notes":"Break-glass documented separately."},{"legacy":"MDT imaging","modern":["Windows Autopilot"],"status":"Actively reducing","owner":"End-user compute","notes":"Lab rebuild path retained for hardware repair only."},{"legacy":"Standalone VPN profiles","modern":["Global Secure Access","Conditional Access"],"status":"Pilot","owner":"Network engineering","notes":"Regional migration begins with knowledge workers."}]}; window.__MW_INITIAL_MODE__ = 'sample'; window.__MW_INITIAL_LABEL__ = 'Healthy sample'; window.__MW_INITIAL_THEME__ = 'dark';</script>
+</body>
+</html>

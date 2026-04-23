@@ -1,0 +1,13 @@
+# Local generated outputs
+mw-reference-architecture-*.html
+mw-reference-architecture-*.json
+
+# Keep tracked example outputs
+!examples/*.html
+!examples/*.json
+
+# PowerShell and editor noise
+*.tmp
+*.log
+.DS_Store
+Thumbs.db

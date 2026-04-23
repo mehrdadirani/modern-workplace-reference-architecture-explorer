@@ -1,0 +1,234 @@
+{
+  "version": "1.0",
+  "generated": "2026-04-23T08:30:00Z",
+  "mode": "sample",
+  "assumptions": [
+    "Healthy sample shows a mostly deployed cloud-native Modern Workplace estate.",
+    "All names, regions, and signal summaries are sanitized fixtures.",
+    "The JSON contract is intentionally simple so live Graph or KQL collectors can populate it safely."
+  ],
+  "tenant": {
+    "displayName": "Contoso",
+    "regions": ["westeurope", "eastus", "uksouth", "australiaeast"]
+  },
+  "layers": [
+    {
+      "id": "identity",
+      "label": "Identity & Access",
+      "components": [
+        {
+          "id": "entra-id",
+          "name": "Microsoft Entra ID",
+          "category": "Identity",
+          "legacy": ["Active Directory (on-prem)", "ADFS"],
+          "modernReplaces": ["ADFS", "Password sync gaps"],
+          "dependencies": ["intune", "conditional-access"],
+          "zeroTrustPillars": ["Identity"],
+          "docs": "https://learn.microsoft.com/en-us/entra/fundamentals/whatis",
+          "telemetry": {
+            "status": "pass",
+            "adoption": 0.96,
+            "signalSummary": "MFA coverage at 94% with no critical auth drift.",
+            "lastChecked": "2026-04-23T08:30:00Z"
+          }
+        },
+        {
+          "id": "conditional-access",
+          "name": "Conditional Access",
+          "category": "Identity",
+          "legacy": ["VPN-only access controls"],
+          "modernReplaces": ["Static perimeter rules"],
+          "dependencies": ["entra-id", "intune"],
+          "zeroTrustPillars": ["Identity", "Devices", "Network"],
+          "docs": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview",
+          "telemetry": {
+            "status": "pass",
+            "adoption": 0.91,
+            "signalSummary": "Target persona policies enabled across privileged and remote access paths.",
+            "lastChecked": "2026-04-23T08:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "device",
+      "label": "Device Management",
+      "components": [
+        {
+          "id": "intune",
+          "name": "Microsoft Intune",
+          "category": "Device",
+          "legacy": ["SCCM-only management", "GPO-heavy configuration"],
+          "modernReplaces": ["Settings Catalog", "Endpoint security baselines"],
+          "dependencies": ["entra-id"],
+          "zeroTrustPillars": ["Devices", "Apps", "Data"],
+          "docs": "https://learn.microsoft.com/en-us/mem/intune/fundamentals/what-is-intune",
+          "telemetry": {
+            "status": "pass",
+            "adoption": 0.88,
+            "signalSummary": "Managed device compliance remains above 92% in all sample regions.",
+            "lastChecked": "2026-04-23T08:30:00Z"
+          }
+        },
+        {
+          "id": "autopatch",
+          "name": "Windows Autopatch",
+          "category": "Device",
+          "legacy": ["Manual ring scheduling"],
+          "modernReplaces": ["Ring automation"],
+          "dependencies": ["intune"],
+          "zeroTrustPillars": ["Devices"],
+          "docs": "https://learn.microsoft.com/en-us/windows/deployment/windows-autopatch/overview/windows-autopatch-overview",
+          "telemetry": {
+            "status": "pass",
+            "adoption": 0.78,
+            "signalSummary": "Ring coverage stable with no major SLA misses in the sample estate.",
+            "lastChecked": "2026-04-23T08:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "workload",
+      "label": "Workload Platforms",
+      "components": [
+        {
+          "id": "windows-365",
+          "name": "Windows 365",
+          "category": "Workload",
+          "legacy": ["Dedicated VDI farms"],
+          "modernReplaces": ["Fixed desktop pools"],
+          "dependencies": ["entra-id", "intune"],
+          "zeroTrustPillars": ["Devices", "Apps", "Network"],
+          "docs": "https://learn.microsoft.com/en-us/windows-365/overview",
+          "telemetry": {
+            "status": "pass",
+            "adoption": 0.84,
+            "signalSummary": "Cloud PC provisioning stable with no active capacity alerts.",
+            "lastChecked": "2026-04-23T08:30:00Z"
+          }
+        },
+        {
+          "id": "avd",
+          "name": "Azure Virtual Desktop",
+          "category": "Workload",
+          "legacy": ["Session-based RDSH"],
+          "modernReplaces": ["Pooled host farms"],
+          "dependencies": ["entra-id", "log-analytics"],
+          "zeroTrustPillars": ["Apps", "Network", "Devices"],
+          "docs": "https://learn.microsoft.com/en-us/azure/virtual-desktop/overview",
+          "telemetry": {
+            "status": "pass",
+            "adoption": 0.76,
+            "signalSummary": "Host pool load remains under target thresholds in both active regions.",
+            "lastChecked": "2026-04-23T08:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "label": "Data Protection",
+      "components": [
+        {
+          "id": "purview",
+          "name": "Microsoft Purview",
+          "category": "Data",
+          "legacy": ["Manual label policy"],
+          "modernReplaces": ["Sensitivity labeling"],
+          "dependencies": ["entra-id"],
+          "zeroTrustPillars": ["Data", "Apps"],
+          "docs": "https://learn.microsoft.com/en-us/purview/purview",
+          "telemetry": {
+            "status": "pass",
+            "adoption": 0.72,
+            "signalSummary": "Label coverage is rising steadily across priority collaboration sites.",
+            "lastChecked": "2026-04-23T08:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "network",
+      "label": "Network & Edge",
+      "components": [
+        {
+          "id": "global-secure-access",
+          "name": "Global Secure Access",
+          "category": "Network",
+          "legacy": ["VPN concentrators"],
+          "modernReplaces": ["Per-app secure access"],
+          "dependencies": ["conditional-access", "entra-id"],
+          "zeroTrustPillars": ["Network", "Identity"],
+          "docs": "https://learn.microsoft.com/en-us/entra/global-secure-access/overview-what-is-global-secure-access",
+          "telemetry": {
+            "status": "pass",
+            "adoption": 0.69,
+            "signalSummary": "Pilot regions active with identity-aware routing in place.",
+            "lastChecked": "2026-04-23T08:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ops",
+      "label": "Operations & Insights",
+      "components": [
+        {
+          "id": "log-analytics",
+          "name": "Azure Monitor + Log Analytics",
+          "category": "Ops",
+          "legacy": ["Fragmented event collectors"],
+          "modernReplaces": ["Central KQL analytics"],
+          "dependencies": ["avd", "intune"],
+          "zeroTrustPillars": ["Devices", "Apps", "Network"],
+          "docs": "https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-query-overview",
+          "telemetry": {
+            "status": "pass",
+            "adoption": 0.86,
+            "signalSummary": "AVD and endpoint signals converge into a shared operations workbook.",
+            "lastChecked": "2026-04-23T08:30:00Z"
+          }
+        }
+      ]
+    }
+  ],
+  "edges": [
+    { "from": "entra-id", "to": "intune", "kind": "required" },
+    { "from": "entra-id", "to": "conditional-access", "kind": "required" },
+    { "from": "conditional-access", "to": "global-secure-access", "kind": "required" },
+    { "from": "intune", "to": "autopatch", "kind": "required" },
+    { "from": "intune", "to": "windows-365", "kind": "required" },
+    { "from": "log-analytics", "to": "avd", "kind": "dataflow" }
+  ],
+  "legacyMap": [
+    {
+      "legacy": "GPO",
+      "modern": ["Intune Settings Catalog", "Configuration Profiles"],
+      "status": "Near complete",
+      "owner": "Device engineering",
+      "notes": "Only kiosk exceptions remain."
+    },
+    {
+      "legacy": "ADFS",
+      "modern": ["Microsoft Entra ID", "Conditional Access"],
+      "status": "Retired",
+      "owner": "Identity platform",
+      "notes": "Break-glass documented separately."
+    },
+    {
+      "legacy": "MDT imaging",
+      "modern": ["Windows Autopilot"],
+      "status": "Actively reducing",
+      "owner": "End-user compute",
+      "notes": "Lab rebuild path retained for hardware repair only."
+    },
+    {
+      "legacy": "Standalone VPN profiles",
+      "modern": ["Global Secure Access", "Conditional Access"],
+      "status": "Pilot",
+      "owner": "Network engineering",
+      "notes": "Regional migration begins with knowledge workers."
+    }
+  ]
+}
