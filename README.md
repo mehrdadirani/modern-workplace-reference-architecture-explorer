@@ -11,6 +11,8 @@ Start here if you want to test drive the explorer immediately:
 - Live hosted demo: https://mehrdadirani.github.io/modern-workplace-reference-architecture-explorer/
 - Healthy generated example: https://mehrdadirani.github.io/modern-workplace-reference-architecture-explorer/examples/healthy-sample.html
 - Degraded generated example: https://mehrdadirani.github.io/modern-workplace-reference-architecture-explorer/examples/degraded-sample.html
+- Virtual desktop strategy assessment: https://mehrdadirani.github.io/virtual-desktop-strategy-readiness-assessment/Virtual-Desktop-Strategy-Readiness-Assessment.html
+- Windows 365 endpoint validator sample report: https://mehrdadirani.github.io/w365-endpoint-network-validator/sample-output/W365-Results-sanitized-sample.html
 
 If you prefer to run the files locally, you can also open `index.html` directly from the repository or generate new outputs with the PowerShell script.
 
